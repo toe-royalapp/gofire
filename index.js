@@ -6,7 +6,15 @@ import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {};
+const firebaseConfig = {
+  apiKey: "AIzaSyCwXHvwNSJKyWaPUa58hNpu5ny7s-C7cG4",
+  authDomain: "gofire-9ce2c.firebaseapp.com",
+  projectId: "gofire-9ce2c",
+  storageBucket: "gofire-9ce2c.appspot.com",
+  messagingSenderId: "646521782984",
+  appId: "1:646521782984:web:e1f295dfa8e4afdb429bfd",
+  measurementId: "G-WMJ0H2TK22"
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
