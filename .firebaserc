@@ -1,8 +1,0 @@
-{
-  "projects": {
-    "default": "gofire-9ce2c",
-    "staging": "gofire-9ce2c"
-  },
-  "targets": {},
-  "etags": {}
-}

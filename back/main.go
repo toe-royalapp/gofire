@@ -13,14 +13,14 @@ import (
 
 func main() {
 	app, _, _ := config.SetupFirebase()
-	sendToToken(app)
+	// sendToToken(app)
 	ctx := context.Background()
 	client, err := app.Messaging(ctx)
 	if err != nil {
 		log.Fatalf("error getting Messaging client: %v\n", err)
 	}
-	// sendAll(context.Background(), client)
-	sendMultiClients(ctx, client)
+	subscribeToTopic(context.Background(), client)
+	sendToTopic(context.Background(), client)
 }
 
 func sendToToken(app *firebase.App) {
@@ -42,11 +42,10 @@ func sendToToken(app *firebase.App) {
 			"time":  "2:45",
 		},
 		Notification: &messaging.Notification{
-			Title: "this is title",
-			Body:  "this is notification body",
+			Title: "this is title from token",
+			Body:  "this is body from the token",
 		},
 		Token: registrationToken,
-		// Topic: "my-topic-name",
 	}
 
 	// Send a message to the device corresponding to the provided
@@ -112,35 +111,28 @@ func sendToCondition(ctx context.Context, client *messaging.Client) {
 
 func sendAll(ctx context.Context, client *messaging.Client) {
 	// This registration token comes from the client FCM SDKs.
-	registrationToken := "cma1_gL2pBv10EdZAI5Aqz:APA91bEU54h09KQ3ZV8fZIdtaCNrxw4HHiBqh35tKfb48P7MINUQPQcl3wkXJhzmOwrrrp7R6r5M3w3WYkJyn4Fc_EWngWGb19B76gwxXxA1w25PQi8wLE2fO38T3dfjx5fZ2HgvW60U"
+	registrationToken := "cPyTrFDVLpUTHN97igxQXE:APA91bG77ZmlpLRXKBmgV-mpGf9GnLYKxJFkFybchDLLnNVlt99qyueD6hTSgAq4RP4mpSqlQZBW_WLonqNaterYuxsM1XY6od_SNITJjyljuZvx1LquHkqzSMeIdoQD6mg8u9bQaEIr"
 
 	// [START send_all]
 	// Create a list containing up to 500 messages.
 	messages := []*messaging.Message{
 		{
 			Notification: &messaging.Notification{
-				Title: "Price get",
+				Title: "Price drop",
 				Body:  "5% off all electronics",
 			},
 			Token: registrationToken,
 		},
 		{
 			Notification: &messaging.Notification{
-				Title: "Price update",
-				Body:  "3% off all books",
-			},
-			Topic: "readers-club",
-		},
-		{
-			Notification: &messaging.Notification{
 				Title: "Price drop",
 				Body:  "2% off all books",
 			},
-			Topic: "readers-club",
+			Topic: "highScores",
 		},
 	}
 
-	br, err := client.SendAll(ctx, messages)
+	br, err := client.SendAll(context.Background(), messages)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -148,33 +140,7 @@ func sendAll(ctx context.Context, client *messaging.Client) {
 	// See the BatchResponse reference documentation
 	// for the contents of response.
 	fmt.Printf("%d messages were sent successfully\n", br.SuccessCount)
-	fmt.Printf("%d messages were sent fail\n", br.FailureCount)
 	// [END send_all]
-}
-
-func sendMultiClients(ctx context.Context, client *messaging.Client) {
-
-	registrationTokens := []string{
-		"eHebYoXYCTytsAzWFT65G3:APA91bFTLW1HMVoHgisnxxqzHrX7XgGAiA8lsMq-kyM3rQyldatrUsYQO3xyFcs7o3A5DLfxK-cFdvN-mymeYgOqNueF3jPrBPlfU7tk3nCZyyKifs4NnP3KxEFIZEVBO-yoUXTfc2F4",
-		"cma1_gL2pBv10EdZAI5Aqz:APA91bG1yCJ-8b4hoYe45_tqonLW4BLZGtMCb5K0zI1PzlBXJIU8F8zYztnhlpbHj9lr3y-0LQj0BR0e_1dMK_BdtxOe1LK-UEyw6qGwyXGz8CMyvueUsw72yikmrDoldSQlMx5aFmji",
-		"cNj7S4WM4aIyUTGsUASyx5:APA91bGPb9SPY6Z9x9uTgEgE00rNRcvb_UVgSvUicjHDvobBp_JDiSZAg417uLtLxJtn_kgXR5724UsBXIXrSdf2kIq8CKmXrPbj0AmHeaQY9lntB5ACzKjjvFF34k8xu8J-nit_8OL1",
-	}
-	message := &messaging.MulticastMessage{
-		Notification: &messaging.Notification{
-			Title: "Firebase Notification Multi",
-			Body:  "This is firebase notification",
-		},
-
-		Tokens: registrationTokens,
-	}
-
-	// br, err := client.SendMulticast(context.Background(), message)
-	br, err := client.SendMulticast(context.Background(), message)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	fmt.Printf("%d messages were sent multicast successfully\n", br.SuccessCount)
 }
 
 func sendMulticast(ctx context.Context, client *messaging.Client) {
@@ -182,9 +148,9 @@ func sendMulticast(ctx context.Context, client *messaging.Client) {
 	// Create a list containing up to 500 registration tokens.
 	// This registration tokens come from the client FCM SDKs.
 	registrationTokens := []string{
-		"YOUR_REGISTRATION_TOKEN_1",
+		"cPyTrFDVLpUTHN97igxQXE:APA91bG77ZmlpLRXKBmgV-mpGf9GnLYKxJFkFybchDLLnNVlt99qyueD6hTSgAq4RP4mpSqlQZBW_WLonqNaterYuxsM1XY6od_SNITJjyljuZvx1LquHkqzSMeIdoQD6mg8u9bQaEIr",
 		// ...
-		"YOUR_REGISTRATION_TOKEN_n",
+		"cma1_gL2pBv10EdZAI5Aqz:APA91bG1yCJ-8b4hoYe45_tqonLW4BLZGtMCb5K0zI1PzlBXJIU8F8zYztnhlpbHj9lr3y-0LQj0BR0e_1dMK_BdtxOe1LK-UEyw6qGwyXGz8CMyvueUsw72yikmrDoldSQlMx5aFmji",
 	}
 	message := &messaging.MulticastMessage{
 		Data: map[string]string{
@@ -202,6 +168,10 @@ func sendMulticast(ctx context.Context, client *messaging.Client) {
 	// See the BatchResponse reference documentation
 	// for the contents of response.
 	fmt.Printf("%d messages were sent successfully\n", br.SuccessCount)
+	fmt.Printf("%d messages were not sent\n", br.FailureCount)
+	for x := range br.Responses {
+		fmt.Printf("%d messages response - \n", &x)
+	}
 	// [END send_multicast]
 }
 
@@ -210,9 +180,10 @@ func sendMulticastAndHandleErrors(ctx context.Context, client *messaging.Client)
 	// Create a list containing up to 500 registration tokens.
 	// This registration tokens come from the client FCM SDKs.
 	registrationTokens := []string{
-		"YOUR_REGISTRATION_TOKEN_1",
+		"cPyTrFDVLpUTHN97igxQXE:APA91bE1knD_CUqzUTDevNtJwIUbjM-eNXUe40dNS9Z24jhcHwkae47hKOB1TDoIOPWBk-dgu-3IUBIVxfhRfAg1LaLbAgN95tqotkBA3WprqEBEOxOUDW1QRuCaKNxALEcUHM6PLb0f",
 		// ...
-		"YOUR_REGISTRATION_TOKEN_n",
+		"cma1_gL2pBv10EdZAI5Aqz:APA91bG1yCJ-8b4hoYe45_tqonLW4BLZGtMCb5K0zI1PzlBXJIU8F8zYztnhlpbHj9lr3y-0LQj0BR0e_1dMK_BdtxOe1LK-UEyw6qGwyXGz8CMyvueUsw72yikmrDoldSQlMx5aFmji",
+		"eHebYoXYCTytsAzWFT65G3:APA91bFTLW1HMVoHgisnxxqzHrX7XgGAiA8lsMq-kyM3rQyldatrUsYQO3xyFcs7o3A5DLfxK-cFdvN-mymeYgOqNueF3jPrBPlfU7tk3nCZyyKifs4NnP3KxEFIZEVBO-yoUXTfc2F4",
 	}
 	message := &messaging.MulticastMessage{
 		Data: map[string]string{
@@ -226,7 +197,6 @@ func sendMulticastAndHandleErrors(ctx context.Context, client *messaging.Client)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	if br.FailureCount > 0 {
 		var failedTokens []string
 		for idx, resp := range br.Responses {
@@ -238,6 +208,7 @@ func sendMulticastAndHandleErrors(ctx context.Context, client *messaging.Client)
 
 		fmt.Printf("List of tokens that caused failures: %v\n", failedTokens)
 	}
+	fmt.Printf("%d messages were sent successfully\n", br.SuccessCount)
 	// [END send_multicast_error]
 }
 
@@ -246,6 +217,7 @@ func sendDryRun(ctx context.Context, client *messaging.Client) {
 		Data: map[string]string{
 			"score": "850",
 			"time":  "2:45",
+			"dry":   "dry condition",
 		},
 		Token: "token",
 	}
@@ -356,9 +328,9 @@ func subscribeToTopic(ctx context.Context, client *messaging.Client) {
 	// [START subscribe_golang]
 	// These registration tokens come from the client FCM SDKs.
 	registrationTokens := []string{
-		"YOUR_REGISTRATION_TOKEN_1",
+		"cPyTrFDVLpUTHN97igxQXE:APA91bE1knD_CUqzUTDevNtJwIUbjM-eNXUe40dNS9Z24jhcHwkae47hKOB1TDoIOPWBk-dgu-3IUBIVxfhRfAg1LaLbAgN95tqotkBA3WprqEBEOxOUDW1QRuCaKNxALEcUHM6PLb0f",
 		// ...
-		"YOUR_REGISTRATION_TOKEN_n",
+		"cma1_gL2pBv10EdZAI5Aqz:APA91bG1yCJ-8b4hoYe45_tqonLW4BLZGtMCb5K0zI1PzlBXJIU8F8zYztnhlpbHj9lr3y-0LQj0BR0e_1dMK_BdtxOe1LK-UEyw6qGwyXGz8CMyvueUsw72yikmrDoldSQlMx5aFmji",
 	}
 
 	// Subscribe the devices corresponding to the registration tokens to the
@@ -379,9 +351,9 @@ func unsubscribeFromTopic(ctx context.Context, client *messaging.Client) {
 	// [START unsubscribe_golang]
 	// These registration tokens come from the client FCM SDKs.
 	registrationTokens := []string{
-		"YOUR_REGISTRATION_TOKEN_1",
+		"cPyTrFDVLpUTHN97igxQXE:APA91bE1knD_CUqzUTDevNtJwIUbjM-eNXUe40dNS9Z24jhcHwkae47hKOB1TDoIOPWBk-dgu-3IUBIVxfhRfAg1LaLbAgN95tqotkBA3WprqEBEOxOUDW1QRuCaKNxALEcUHM6PLb0f",
 		// ...
-		"YOUR_REGISTRATION_TOKEN_n",
+		"cma1_gL2pBv10EdZAI5Aqz:APA91bG1yCJ-8b4hoYe45_tqonLW4BLZGtMCb5K0zI1PzlBXJIU8F8zYztnhlpbHj9lr3y-0LQj0BR0e_1dMK_BdtxOe1LK-UEyw6qGwyXGz8CMyvueUsw72yikmrDoldSQlMx5aFmji",
 	}
 
 	// Unsubscribe the devices corresponding to the registration tokens from

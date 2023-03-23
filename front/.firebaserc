@@ -1,0 +1,11 @@
+{
+  "projects": {
+    "default": "gofire-9ce2c",
+    "staging": "gofire-9ce2c",
+    "second": "gofire-9ce2c",
+    "secod": "gofire-9ce2c",
+    "send": "gofire-9ce2c"
+  },
+  "targets": {},
+  "etags": {}
+}
