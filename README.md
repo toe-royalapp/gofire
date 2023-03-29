@@ -14,6 +14,8 @@
 
 ### for Back
 
+`go mod tidy`
+
 `go run  back/main.go`
 
 ### for Front
