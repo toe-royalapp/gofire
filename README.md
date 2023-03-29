@@ -19,9 +19,15 @@
 ### for Front
 
 `$ npm i firebase`
+
 `$ npm install -g firebase-tools`
+
 `$ firebase login`
+
 `$ firebase init`
+
 `$ firebase deploy`
+
 `$ firebase use --add`
+
 `$ firebase serve -p 8081`
